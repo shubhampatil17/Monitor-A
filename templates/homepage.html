@@ -1,0 +1,101 @@
+<!doctype html>
+<html ng-app="amazonMonitor" ng-cloak>
+    <head>
+        <title>Homepage</title>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{url_for('static', filename = 'css/homepage.css')}}">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    </head>
+    
+    <body ng-controller="mainController">
+        <header>
+            <nav class="navbar navbar-default">
+                <div class="container-fluid">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="/logout" class="btn btn-primary navbar-btn">LOGOUT</a></li>
+                    </ul>
+                </div>    
+            </nav>        
+        </header>
+        
+        <section>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-2">
+                        <ul class="nav nav-pills nav-stacked">
+                            <li role="presentation" class="active"><a href="#addNewItemDiv" role="tab" data-toggle="pill">Add New Product</a></li>
+                            <li role="presentation"><a href="#listAllItemsDiv" role="tab" data-toggle="pill">List All Products</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-md-offset-2 tab-content">
+                        <div role="tabpanel" class="tab-pane fade in active" id="addNewItemDiv">
+                            <div class="jumbotron">
+                                <div class="row">
+                                    <div class="col-md-6 col-md-offset-2">
+                                        <form ng-submit="addProduct()">
+                                            <h2>Monitor this product</h2>
+
+                                            <div class="form-group">
+                                                <label class="sr-only" for="productASIN">Product's ASIN</label>
+                                                <input type="text" class="form-control" id="productASIN" placeholder="Product's ASIN" name="productASIN" ng-model="product.productASIN" required>
+                                            </div>
+
+                                            <h2>In every</h2>
+
+                                            <div class="form-group">
+                                                <label class="sr-only" for="interval">Interval</label>
+                                                <input type="text" class="form-control interval-value" id="interval" name="interval" placeholder="Price Checking Interval" ng-model="product.interval" required>
+
+                                                <select class="form-control interval-unit" name="intervalUnit" ng-model="product.intervalUnit">
+                                                    <option>Seconds</option>
+                                                    <option>Minutes</option>
+                                                    <option>Hours</option>
+                                                    <option>Days</option>
+                                                    <option>Weeks</option>
+                                                </select>
+                                            </div>
+
+                                            <h2>And notify me when price is lower than</h2>
+
+                                            <div class="form-group">
+                                                <label class="sr-only" for="thresholdPrice">Price</label>
+                                                <input type="text" class="form-control" id="thresholdPrice" name="thresholdPrice" placeholder="Threshold Price" ng-model="product.thresholdPrice" required>
+                                            </div>
+
+                                            <button type="submit" class="btn btn-lg btn-primary btn-block">Start Monitoring !</button>
+                                        </form>
+                                    </div>   
+                                    
+                                    <div class="col-md-4">
+                                        <div class="alert" role="alert alert-dismissible" ng-class="{}" ng-show="productSubmissionResponse">
+                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                            {{productSubmissionResponse}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div role="tabpanel" class="tab-pane fade" id="listAllItemsDiv">
+                            <div class="jumbotron">
+                                <p>def</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>            
+            </div>
+        </section>
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <script src="{{url_for('static', filename = 'js/homepage.js')}}"></script>
+    </body>
+</html>

@@ -1,0 +1,57 @@
+.navbar-default .navbar-nav>li>a {
+    color: white;
+}
+
+.nav>li>a {
+    margin-right: 20px;
+}
+
+.nav-pills>li.active>a {
+    border-radius: 0px;
+}
+
+.navbar-default {
+    border-radius: 0px;
+}
+
+.jumbotron {
+    background-color: white;
+}
+
+.jumbotron form {
+    text-align: center;
+}
+
+.jumbotron form button {
+    border-radius: 0px;
+}
+
+.jumbotron .form-control {
+    border-radius: 0px;
+    height: 40px;
+    text-align: center;
+}
+
+.interval-value {
+    display: inline-block;
+    width: 74%;
+}
+
+.interval-unit {
+    display: inline-block;
+    width: 25%;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+    color: white;
+}
+
+.interval-unit option {
+    background-color: white;
+    color: black;
+}
+}
+/*
+.interval-value {
+    display: inline-block;
+    width: 75%;
+}*/
