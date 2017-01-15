@@ -1,0 +1,45 @@
+<div class="homepage" ng-controller="homeController">
+    <div class="container-fluid">
+        <a href="/#/list-added-products" class="btn btn-default btn-sm pull-right allProductsBtn">See All Products<i class="fa fa-chevron-right" aria-hidden="true"></i></a>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3 well">
+                <form ng-submit="addNewProduct()">
+                    <h3>Monitor this product</h3>
+                    <div class="form-group">
+                        <label class="sr-only" for="productASIN">Product's ASIN</label>
+                        <input type="text" class="form-control" id="productASIN" placeholder="Product's ASIN" name="productASIN" ng-model="product.productASIN" required>
+                    </div>
+                    <h3>In every</h3>
+                    <div class="form-group">
+                        <label class="sr-only" for="interval">Interval</label>
+                        <input type="number" class="form-control interval-value" id="interval" name="interval" placeholder="Price Checking Interval" ng-model="product.interval" required>
+
+                        <select class="form-control interval-unit" name="intervalUnit" ng-model="product.intervalUnit">
+                            <option>Seconds</option>
+                            <option>Minutes</option>
+                            <option>Hours</option>
+                            <option>Days</option>
+                            <option>Weeks</option>
+                        </select>
+                    </div>
+                    <h3>And notify me when price is lower than</h3>
+
+                    <div class="form-group">
+                        <label class="sr-only" for="thresholdPrice">Price</label>
+                        <input type="number" class="form-control" id="thresholdPrice" name="thresholdPrice" placeholder="Threshold Price" ng-model="product.thresholdPrice" required>
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-primary btn-block">Start Monitoring <i class="fa fa-check" aria-hidden="true"></i></button>
+
+                </form>
+            </div>
+            <div class="col-md-3">
+                <div class="alert" ng-show="addProductComplete" ng-class="addProductSuccess ? 'alert-success' : 'alert-danger'">
+                    <p><strong>Status</strong></p>
+                    {{addProductCompleteMessage}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

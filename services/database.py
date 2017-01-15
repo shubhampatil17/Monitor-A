@@ -1,6 +1,8 @@
 from mongoengine import connect
-from models.Product import Product
+
+from services.Product import Product
 from services.utils import get_time_in_seconds
+
 
 class DatabaseService:
 

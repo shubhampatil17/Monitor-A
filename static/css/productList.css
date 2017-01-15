@@ -1,0 +1,9 @@
+.productList .container-fluid {
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-bottom: 20px;
+}
+
+.homepageBtn i {
+    padding-right: 10px;
+}

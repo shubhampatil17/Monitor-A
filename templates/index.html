@@ -1,25 +1,81 @@
 <!doctype html>
 <html ng-app="amazonMonitor">
-    <head>
-        <title>Monitor-A</title>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-        
-        <link rel="stylesheet" href="{{url_for('static', filename = 'css/login.css')}}">
-        
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
-    </head>
-    
-    <body>
-        <header></header>
-        <section ng-view></section>
-        <footer></footer>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <script src="{{url_for('static', filename = 'js/main.js')}}"></script>
-        
-    </body>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Monitor-A</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/login.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/signup.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/homepage.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/productList.css')}}">
+    <link rel="stylesheet" href="{{url_for('static', filename = 'css/main.css')}}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Righteous" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.js"></script>
+</head>
+
+<body ng-controller="mainController" ng-cloak>
+    <header class="header">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <a class="navbar-brand textLogo" href="#" ng-click="goToLandingPartial()">
+                        Monitor-A
+                    </a>
+                </div>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/#/signup" class="btn btn-primary navbar-btn signupBtn" ng-show="isSignUpActive()">SIGN UP</a>
+                    </li>
+                    <li>
+                        <a href="/#/login" class="btn btn-primary navbar-btn signupBtn" ng-show="isLoginActive()">LOG IN</a>
+                    </li>
+                    <li>
+                        <a href="#" ng-click="logoutUser()" class="btn btn-primary navbar-btn logoutBtn" ng-show="isLogoutActive()">LOGOUT</a>
+                    </li>
+                </ul>
+
+            </div>
+        </nav>
+    </header>
+
+    <section ng-view></section>
+
+    <footer class="footer">
+        <nav class="navbar navbar-default">
+            <div class="container-fluid">
+                <span class="copyright">&copy; Copyright. All rights reserved.</span>
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#" class="facebook">
+                            <i class="fa fa-facebook fa-3x" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="twitter">
+                            <i class="fa fa-twitter fa-3x" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="gplus">
+                            <i class="fa fa-google-plus fa-3x" aria-hidden="true"></i>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="{{url_for('static', filename = 'js/main.js')}}"></script>
+</body>
+
 </html>

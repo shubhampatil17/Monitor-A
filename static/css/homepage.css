@@ -1,40 +1,32 @@
-.navbar-default .navbar-nav>li>a {
-    color: white;
+.homepage .container-fluid {
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-bottom: 20px;
 }
 
-.nav>li>a {
+.navbar-nav>li>a {
     margin-right: 20px;
 }
 
-.nav-pills>li.active>a {
-    border-radius: 0px;
-}
-
-.navbar-default {
-    border-radius: 0px;
-}
-
-.jumbotron {
-    background-color: white;
-}
-
-.jumbotron form {
+.sideNavbar {
+    z-index: 100;
     text-align: center;
+    left: 0px;
 }
 
-.jumbotron form button {
-    border-radius: 0px;
+.allProductsBtn i {
+    padding-left: 10px;
 }
 
-.jumbotron .form-control {
-    border-radius: 0px;
-    height: 40px;
+.homepage .well {
     text-align: center;
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
 .interval-value {
     display: inline-block;
-    width: 74%;
+    width: 73%;
 }
 
 .interval-unit {
@@ -49,9 +41,20 @@
     background-color: white;
     color: black;
 }
+
+.homepage form input {
+    height: 39px;
 }
-/*
-.interval-value {
-    display: inline-block;
-    width: 75%;
-}*/
+
+.homepage form select {
+    height: 39px;
+}
+
+.homepage form button i {
+    padding-left: 10px;
+}
+
+.homepage .alert {
+    margin: 0px;
+    text-align: center;
+}

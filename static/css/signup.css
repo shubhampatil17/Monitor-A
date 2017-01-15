@@ -1,0 +1,36 @@
+.signupForm input {
+    height: 40px;
+}
+
+.validUsername,
+.validEmail {
+    color: green;
+}
+
+.invalidUsername,
+.invalidEmail {
+    color: red;
+}
+
+.usernameStatus,
+.emailStatus {
+    height: 40px;
+    line-height: 40px;
+    font-size: 16px;
+}
+
+.signupLoading {
+    position: absolute;
+    top: 40%;
+    left: 48%;
+}
+
+.signupLoading i,
+.signupLoading span {
+    display: block;
+    text-align: center;
+}
+
+.signupLoading span {
+    padding: 5px 0px;
+}

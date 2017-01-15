@@ -1,0 +1,70 @@
+<div class="container" ng-controller="signupController">
+    <form class="signupForm col-md-6 col-sm-8 col-md-offset-4 col-sm-offset-3 form-horizontal" ng-submit="signupUser()" ng-hide="signupInProcess">
+        <h2>Create a new account !</h2>
+        <div class="form-group">
+            <div class="col-md-8">
+                <label class="sr-only" for="username">Username</label>
+                <input type="text" class="form-control" id="username" placeholder="Your username" name="username" required autofocus ng-model="username" ng-change="checkUsernameValidity()">
+            </div>
+            <span class="col-md-4 usernameStatus">
+                <span ng-show="checkingUsernameUnderProgress">
+                <i class="fa fa-circle-o-notch fa-2x fa-spin fa-fw"></i>
+                </span>
+
+            <span ng-hide="checkingUsernameUnderProgress" ng-class="usernameValidityStatus ? 'validUsername' : 'invalidUsername'">{{usernameValidityStatusText}}</span>
+            </span>
+        </div>
+        <div class="form-group">
+            <div class="col-md-8">
+                <label class="sr-only" for="email">Email ID</label>
+                <input type="email" class="form-control" id="email" placeholder="Your email" name="email" required autofocus ng-model="email" ng-change="checkEmailValidity()">
+            </div>
+            <span class="col-md-4 emailStatus">
+                <span ng-show="checkingEmailUnderProgress">
+                <i class="fa fa-circle-o-notch fa-2x fa-spin fa-fw"></i>
+                </span>
+
+            <span ng-hide="checkingEmailUnderProgress" ng-class="emailValidityStatus ? 'validEmail' : 'invalidEmail'">{{emailValidityStatusText}}</span>
+            </span>
+        </div>
+        <div class="form-group">
+            <div class="col-md-8">
+                <label class="sr-only" for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Your password" name="password" required autofocus ng-model="password">
+            </div>
+            <div class="col-md-4">
+                <!--calculate password strength here-->
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-8">
+                <label class="sr-only" for="retypepassword">Re-Type Password</label>
+                <input type="password" class="form-control" id="retypepassword" placeholder="Re-Type your password" name="retypepassword" required autofocus ng-model="retypepassword">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-8">
+                <button type="submit" class="btn btn-lg btn-primary btn-block">Sign Me Up !<i class="fa fa-rocket submitIcon" aria-hidden="true"></i></button>
+
+                <div class="alert alert-danger" ng-show="signupFailed">
+                    <strong>{{signupFailureMessage}}</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-8">
+                <div class="alert alert-success" ng-show="signupSuccess">
+                    <strong>You have been signed up successfully !</strong> Please proceed to <strong>login</strong>.
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="signupLoading" ng-show="signupInProcess">
+        <i class="fa fa-cog fa-spin fa-5x fa-fw"></i>
+        <span>Signing Up ...</span>
+    </div>
+
+</div>

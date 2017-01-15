@@ -1,9 +1,7 @@
-from pytz import utc
-
-from apscheduler.schedulers.background import BackgroundScheduler
-from apscheduler.jobstores.mongodb import MongoDBJobStore
 from apscheduler.executors.pool import ThreadPoolExecutor, ProcessPoolExecutor
-
+from apscheduler.jobstores.mongodb import MongoDBJobStore
+from apscheduler.schedulers.background import BackgroundScheduler
+from pytz import utc
 from services.amazon import check_product
 
 jobstores = {

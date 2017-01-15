@@ -1,7 +1,6 @@
-from flask import Flask, redirect, render_template, url_for, request
+from flask import Flask, render_template
 from services.database import DatabaseService
 # from services.schedular import SchedularService
-import uuid
 
 app = Flask(__name__)
 db_service = DatabaseService('test')
@@ -71,4 +70,4 @@ def render_index():
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', debug= True)
+    app.run(host='0.0.0.0', debug=True)
