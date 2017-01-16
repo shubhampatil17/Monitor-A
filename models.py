@@ -10,9 +10,8 @@ class User(Document):
 class Product(Document):
     asin = StringField(required=True)
     interval = IntField(required=True)
-    interval_unit = StringField(required=True)
     threshold_price = IntField(required=True)
-    last_notified_price = IntField(required=True)
+    last_notified_price = IntField()
     username = StringField(required=True)
     job_id = StringField(required=True)
 

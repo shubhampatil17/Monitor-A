@@ -1,12 +1,15 @@
 from flask import Flask, render_template, session, redirect, url_for, jsonify, request
 import time
 import json
+import uuid
 import urllib
 from passlib.hash import pbkdf2_sha256
 from database_connection import *
 from models import *
 from amazon_operations import *
 from pushbullet_operations import *
+from schedular_operations import *
+from utils import *
 
 app = Flask(__name__)
 config = json.loads(open('config.json').read())
@@ -105,13 +108,37 @@ def oauth_handler():
 def add_new_product():
     product_data = request.get_json(force=True)
     valid_asin, message = is_asin_valid(product_data['asin'])
-    valid_interval, message = is_interval_valid(product_data['interval'], product_data['intervalUnit'])
-
-    if valid_asin and valid_interval:
-        #save to db
-        status = True
-        message = 'Success ! Product added successfully.'
-    elif not valid_asin or not valid_interval:
+    if not valid_asin:
         status = False
+        return jsonify({'status' : status, 'message': message})
+
+    valid_interval, message = is_interval_valid(get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit']))
+    if not valid_interval:
+        status = False
+        return jsonify({'status' : status, 'message' : message})
+
+    job_id = str(uuid.uuid4())
+
+    print(get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit']))
+    product = Product(
+        asin = product_data['asin'],
+        interval = get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit']),
+        threshold_price = int(product_data['thresholdPrice']),
+        username = session['username'],
+        job_id = job_id
+    )
+
+    print(product.asin, product.interval, product.threshold_price, product.username, product.job_id)
+    product.save()
+
+    add_job_to_schedular(
+        job = check_product_price_on_regular_interval,
+        interval = get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit']),
+        job_id = job_id,
+        args = [product_data['asin'], int(product_data['thresholdPrice'])]
+    )
+
+    status = True
+    message = 'Success ! Product added successfully.'
 
     return jsonify({'status' : status, 'message' : message})
