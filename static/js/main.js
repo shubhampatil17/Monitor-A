@@ -224,6 +224,7 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
             if (response.data.status) {
                 $scope.checkAccessToken();
             } else {
+                $scope.loginInProcess = false;
                 $scope.loginFailed = true;
                 $scope.loginFailureMessage = "Login failed ! Invalid credentials";
             }

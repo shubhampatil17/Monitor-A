@@ -8,7 +8,7 @@ class Users(Document):
 
 
 class Products(Document):
-    asin = StringField(required=True)
+    asin = StringField(required=True, unique_with='username')
     interval = IntField(required=True)
     threshold_price = IntField(required=True)
     last_notified_price = IntField()
@@ -18,4 +18,4 @@ class Products(Document):
 class JobHandler(Document):
     interval = IntField(required=True, unique=True)
     job_id = StringField(required=True)
-    asins = ListField(required=True)
+    batch_size = IntField(required=True)

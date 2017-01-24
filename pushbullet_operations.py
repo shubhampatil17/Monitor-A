@@ -6,7 +6,7 @@ import json
 config = json.loads(open('config.json').read())
 
 def check_current_user_data(username):
-    access_token = Users.objects(username = username).first().access_token
+    access_token = Users.objects(username = username).first().pn_access_token
 
     headers = {
         'Access-Token' : access_token,
