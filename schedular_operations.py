@@ -4,7 +4,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from pytz import utc
 
 jobstores = {
-    'mongo' : MongoDBJobStore()
+    'default' : MongoDBJobStore(database="test", collection="jobs")
 }
 
 executors = {

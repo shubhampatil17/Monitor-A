@@ -107,28 +107,27 @@ def oauth_handler():
 @app.route('/addNewProduct', methods=['POST'])
 def add_new_product():
     product_data = request.get_json(force=True)
+    interval = get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit'])
     valid_asin, message = is_asin_valid(product_data['asin'])
     if not valid_asin:
         status = False
         return jsonify({'status' : status, 'message': message})
 
-    valid_interval, message = is_interval_valid(get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit']))
+    valid_interval, message = is_interval_valid(interval)
     if not valid_interval:
         status = False
         return jsonify({'status' : status, 'message' : message})
 
     job_id = str(uuid.uuid4())
 
-    print(get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit']))
     product = Product(
         asin = product_data['asin'],
-        interval = get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit']),
+        interval = interval,
         threshold_price = int(product_data['thresholdPrice']),
         username = session['username'],
         job_id = job_id
     )
 
-    print(product.asin, product.interval, product.threshold_price, product.username, product.job_id)
     product.save()
 
     add_job_to_schedular(
