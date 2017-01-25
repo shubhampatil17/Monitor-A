@@ -1,5 +1,5 @@
 from models import JobHandler, Products
-from database_connection import *
+import database_connection
 from pushbullet_operations import notify_user
 
 

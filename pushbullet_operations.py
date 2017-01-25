@@ -1,4 +1,4 @@
-from models import *
+from models import Users
 import requests
 import api_endpoints
 import json

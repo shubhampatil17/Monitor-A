@@ -4,13 +4,13 @@ import json
 import uuid
 import urllib
 from passlib.hash import pbkdf2_sha256
-from database_connection import *
-from models import *
-from amazon_operations import *
-from pushbullet_operations import *
-from schedular_operations import *
-from database_operations import *
-from utils import *
+import database_connection
+import api_endpoints
+from models import Users, Products, JobHandler
+from amazon_operations import is_asin_valid, is_interval_valid, check_product_price_on_regular_interval
+from pushbullet_operations import check_current_user_data, get_access_token
+from schedular_operations import schedular, add_job_to_schedular
+from utils import get_time_in_seconds
 
 app = Flask(__name__)
 config = json.loads(open('config.json').read())

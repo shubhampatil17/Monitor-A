@@ -1,4 +1,4 @@
-from mongoengine import Document, StringField, EmailField, IntField, ListField
+from mongoengine import Document, StringField, EmailField, IntField
 
 class Users(Document):
     username = StringField(required=True, unique=True)
