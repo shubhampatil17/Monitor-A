@@ -162,3 +162,27 @@ def add_new_product():
     message = 'Success ! Product added successfully.'
 
     return jsonify({'status': status, 'message': message})
+
+
+@app.route('/deleteProduct', methods=['DELETE'])
+def delete_product():
+    product_data = request.get_json(force=True)
+    existing_product = Products.objects(asin=product_data['asin'], username=session['username']).first()
+
+    if existing_product:
+        job = JobHandler.objects(interval=existing_product.interval).first()
+        job.batch_size -= 1
+        if job.batch_size:
+            job.save()
+        else:
+            schedular.remove_job(job_id=job.job_id)
+            job.delete()
+
+        existing_product.delete()
+        status = True
+        message = 'Success ! Product deleted successfully.'
+    else:
+        status = False
+        message = 'Error ! No such product found in database.'
+
+    return jsonify({'status':status, 'message':message})

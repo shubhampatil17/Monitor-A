@@ -16,6 +16,7 @@ def check_current_user_data(username):
     response = requests.get(api_endpoints.PUSHBULLET_CURRENT_USER_ENDPOINT, headers = headers).json()
     return response
 
+
 def get_access_token(code):
 
     headers = {
@@ -31,3 +32,7 @@ def get_access_token(code):
 
     response = requests.post(api_endpoints.PUSHBULLET_ACCESS_TOKEN_ENDPOINT, headers=headers, json=data).json()
     return response['access_token']
+
+
+def notify_user():
+    pass
