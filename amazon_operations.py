@@ -1,6 +1,6 @@
 from models import JobHandler, Products
 import database_connection
-from pushbullet_operations import notify_user
+from pushbullet_operations import send_push_notification
 
 
 def get_number_of_calls_for_batch(batch_size):
@@ -45,9 +45,10 @@ def is_asin_valid(asin):
     return True, None
 
 
-def fetch_prices_by_item_lookup(products):
-    #call amazon api here to fetch data for products
+def fetch_product_data_by_item_lookup(products):
+    # call amazon api here to fetch data for products
     pass
+
 
 def check_product_price_on_regular_interval(interval):
     products = Products.objects(interval=interval)
@@ -57,9 +58,9 @@ def check_product_price_on_regular_interval(interval):
         start_index = x * 10
         end_index = x * 10 + 10 if x < number_of_batches - 1 else len(products)
         batch = products[start_index:end_index]
-        prices = fetch_prices_by_item_lookup(batch)
+        data = fetch_product_data_by_item_lookup(batch)
 
         for index in range(len(batch)):
-            product, current_price = batch[index], prices[index]
+            product, current_price = batch[index], data[index]['price']
             if current_price < product.threshold_price and current_price != product.last_notified_price:
-                notify_user()
+                send_push_notification(product)
