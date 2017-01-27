@@ -1,7 +1,9 @@
 from models import JobHandler, Products
+import requests
+import api_endpoints
 import database_connection
 from pushbullet_operations import send_push_notification
-
+from mail_client import send_email
 
 def get_number_of_calls_for_batch(batch_size):
     number_of_calls = (batch_size // 10) + 1 if batch_size % 10 else (batch_size // 10)
@@ -38,6 +40,20 @@ def is_interval_valid(interval, asin, username):
 
     return status, err
 
+def amazon_item_lookup(asins):
+    params = {
+        'Service': 'AWSECommerceService',
+        'AWSAccessKeyId': 'access_key_id',
+        'AssociateTag': 'associate_tag',
+        'Operation': 'ItemLookup',
+        'ItemId': ','.join(asins),
+        'IdType': 'ASIN',
+        'Timestamp': 'some_time_stamp',
+        'Signature': 'some_signature'
+    }
+
+    response = requests.get(api_endpoints.AMAZON_UK_PRODUCT_API_ENDPOINT, params=params)
+    return response
 
 def is_asin_valid(asin):
     # call amazon api here and
@@ -64,3 +80,4 @@ def check_product_price_on_regular_interval(interval):
             product, current_price = batch[index], data[index]['price']
             if current_price < product.threshold_price and current_price != product.last_notified_price:
                 send_push_notification(product)
+                # send_email(product)

@@ -1,16 +1,27 @@
 import smtplib
 import email.utils
+import database_connection
+import os
+from models import Users
 from email.mime.text import MIMEText
 
-msg = MIMEText('You have got mail.')
-msg['To'] = email.utils.formataddr(('Recipient', 'shubhteenax17@gmail.com'))
-msg['From'] = email.utils.formataddr(('Author', 'abc@monitora.com'))
-msg['Subject'] = 'Prices dropped !'
+fromaddr = os.environ.get('MAILER_USERNAME')
+password = os.environ.get('MAILER_PASSWORD')
+server = smtplib.SMTP('smtp.gmail.com', 587)
+server.starttls()
+server.login(fromaddr, password)
 
-server = smtplib.SMTP('127.0.0.1', 5001)
-server.set_debuglevel(True)
+def send_email(product):
+    user = Users.objects(username=product.username).first()
+    toaddr = [user.email]
 
-try:
-    server.sendmail('abc@monitora.com', ['shubhteenax17@gmail.com'], msg.as_string())
-finally:
-    server.quit()
+    msg = MIMEText('You have got mail.')
+    msg['To'] = email.utils.formataddr(('Recipient', ','.join(toaddr)))
+    msg['From'] = email.utils.formataddr(('Author', fromaddr))
+    msg['Subject'] = 'Prices dropped !'
+
+    try:
+        server.sendmail(fromaddr, toaddr, msg.as_string())
+    except:
+        pass
+
