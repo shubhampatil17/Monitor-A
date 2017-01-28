@@ -266,6 +266,91 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
     }
 
     $scope.goToLandingPartial();
-}).controller("productListController", function ($scope, $http) {
+}).controller("productListController", function ($scope, $http, $window, $timeout) {
+    $scope.productsPerPage = 4;
+    $scope.paginationSlot = [1, 2, 3, 4, 5];
+    $scope.paginationIndex = 1;
 
+    $scope.rollBackPaginationSlot = function () {
+        if ($scope.paginationIndex > 5) {
+            for (page in $scope.paginationSlot) {
+                $scope.paginationSlot[page] = $scope.paginationSlot[page] - 5;
+            }
+
+            $scope.paginationIndex = $scope.paginationSlot[0];
+        }
+    }
+
+    $scope.rollForwardPaginationSlot = function () {
+
+        if ($scope.ceil($scope.paginationIndex / 5) < $scope.ceil(($scope.productList.length / $scope.productsPerPage) / 5)) {
+            for (var page in $scope.paginationSlot) {
+                $scope.paginationSlot[page] = $scope.paginationSlot[page] + 5;
+            }
+
+            $scope.paginationIndex = $scope.paginationSlot[0];
+        }
+    }
+
+    $scope.changePaginationIndex = function (page) {
+        $scope.paginationIndex = page;
+    }
+
+    $scope.getProductList = function () {
+        $http({
+            method: 'GET',
+            url: '/getAddedProducts',
+        }).then(function (response) {
+            if (response.data.status) {
+                $scope.productList = response.data.products;
+            }
+        }, function (error) {
+            //handle error
+            console.log(error)
+        })
+    }
+
+    $scope.floor = function (number) {
+        return $window.Math.floor(number);
+    }
+
+    $scope.ceil = function (number) {
+        return $window.Math.ceil(number);
+    }
+
+
+    $scope.popConfirmationBox = function (asin) {
+        $scope.asinToDelete = asin;
+        $scope.showDeleteResponse = false;
+        $scope.productDeletionSuccess = false;
+        $scope.productUnderDeletion = false;
+        console.log($('#confirmationModal')[0]);
+        $('#confirmationModal').modal('show');
+    }
+
+    $scope.deleteProduct = function (asin) {
+        $scope.productUnderDeletion = true;
+        $http({
+            method: 'DELETE',
+            url: '/deleteProduct',
+            data: {
+                'asin': asin
+            }
+        }).then(function (response) {
+            $scope.productDeletionSuccess = response.data.status;
+            $scope.deletionResponse = response.data.message;
+            $scope.showDeleteResponse = true;
+
+            $timeout(function () {
+                $('#confirmationModal').modal('hide');
+            }, 3000)
+            $scope.getProductList();
+
+        }, function (error) {
+            //handle error
+            console.log(error)
+        })
+    }
+
+    $scope.getProductList();
 });

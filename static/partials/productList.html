@@ -2,4 +2,66 @@
     <div class="container-fluid">
         <a href="/#/homepage" class="btn btn-default btn-sm homepageBtn"><i class="fa fa-chevron-left" aria-hidden="true"></i>Add New Product</a>
     </div>
+    <div class="container content">
+        <div class="noProductList" ng-hide="productList.length">
+            <p> Sorry ! No added products found.</p>
+        </div>
+        <div class="row" ng-show="productList.length">
+
+            <div class="col-md-3" ng-repeat="product in productList.slice((paginationIndex - 1)*productsPerPage, (paginationIndex - 1)*productsPerPage + productsPerPage)">
+
+                <div class="thumbnail">
+                    <img src="http://g-ec2.images-amazon.com/images/G/01/social/api-share/amazon_logo_500500._V323939215_.png" alt="http://g-ec2.images-amazon.com/images/G/01/social/api-share/amazon_logo_500500._V323939215_.png">
+                    <!--                    <img src={{product.url}} alt="http://g-ec2.images-amazon.com/images/G/01/social/api-share/amazon_logo_500500._V323939215_.png">-->
+                    <div class="caption">
+                        <p class="productContentASIN"><strong>ASIN :</strong> {{product.asin}}</p>
+                        <p class="productContentInterval"><strong>Interval :</strong> {{product.interval}}</p>
+                        <p class="productContentThreshold"><strong>Threshold :</strong> {{product.threshold_price}}</p>
+                        <p class="text-right">
+                            <a href="javascript:void(0);" ng-click="popConfirmationBox(product.asin)"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container-fluid paginationDiv" ng-show="productList.length">
+        <nav aria-labeled="page navigation">
+            <ul class="pagination">
+                <li ng-class="{'disabled': paginationIndex <= 5}">
+                    <span aria-label="previous" ng-click=" paginationIndex <= 5 || rollBackPaginationSlot()">
+                        <span aria-hidden="true">&laquo;</span>
+                    </span>
+                </li>
+                <li ng-repeat="page in paginationSlot" ng-class="{'active': page === paginationIndex, 'disabled': page > ceil(productList.length/productsPerPage)}">
+                    <span ng-click="page > ceil(productList.length/productsPerPage) || changePaginationIndex(page)">{{page}}</span>
+                </li>
+                <li ng-class="{'disabled': ceil(paginationIndex/5) >= ceil((productList.length/productsPerPage)/5)}">
+                    <span aria-label="next" ng-click="ceil(paginationIndex/5) >= ceil((productList.length/productsPerPage)/5) || rollForwardPaginationSlot()">
+                        <span aria-hidden="true">&raquo;</span>
+                    </span>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+
+    <div class="modal fade" id="confirmationModal" role="dialog" tabindex="-1">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">Confirmation</div>
+                <div class="modal-body">
+                    <p>Do you surely want to delete this product with ASIN {{asinToDelete}}?</p>
+                    <div ng-show="showDeleteResponse" class="alert" ng-class="{'alert-success' : productDeletionSuccess, 'alert-danger': !productDeletionSuccess}">{{deletionResponse}}</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" ng-click="deleteProduct(asinToDelete)" ng-disabled="productUnderDeletion">Yes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

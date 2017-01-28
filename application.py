@@ -186,3 +186,9 @@ def delete_product():
         message = 'Error ! No such product found in database.'
 
     return jsonify({'status':status, 'message':message})
+
+
+@app.route('/getAddedProducts', methods=['GET'])
+def get_added_product():
+    products = Products.objects(username = session['username']).to_json()
+    return jsonify({'status':True, 'products': json.loads(products)})

@@ -7,3 +7,27 @@
 .homepageBtn i {
     padding-right: 10px;
 }
+
+.paginationDiv {
+    text-align: center;
+}
+
+.productList .content {
+    min-height: 440px;
+}
+
+.pagination {
+    margin: 10px 0px;
+}
+
+.productList .content .thumbnail i {
+    font-size: 20px;
+    color: indianred;
+}
+
+.productList .noProductList {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 40px;
+    font-weight: bold;
+}
