@@ -269,7 +269,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
         }
     }
 
-}).controller("productListController", function ($scope, $http, $timeout) {
+}).controller("productListController", function ($scope, $http, $timeout, $window) {
     $scope.productsPerPage = 4;
     $scope.paginationSlot = [1, 2, 3, 4, 5];
     $scope.paginationIndex = 1;
