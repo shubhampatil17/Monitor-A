@@ -13,7 +13,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
         redirectTo: '/'
     });
 
-}]).controller("mainController", function ($scope, $http, $location) {
+}]).controller("mainController", function ($scope, $http, $window, $location) {
     $scope.username;
     $scope.password;
 
@@ -160,7 +160,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
         })
     }
 
-}).controller("signupController", function ($scope, $http, $location) {
+}).controller("signupController", function ($scope, $http) {
     $scope.username;
     $scope.email;
     $scope.password;
@@ -269,7 +269,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
         }
     }
 
-}).controller("productListController", function ($scope, $http, $window, $timeout) {
+}).controller("productListController", function ($scope, $http, $timeout) {
     $scope.productsPerPage = 4;
     $scope.paginationSlot = [1, 2, 3, 4, 5];
     $scope.paginationIndex = 1;
