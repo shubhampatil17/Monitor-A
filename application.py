@@ -23,7 +23,8 @@ def render_index():
 
 @app.route('/checkLoginStatus')
 def check_login_status():
-    return jsonify({'status': 'username' in session})
+    return jsonify(
+        {'status': 'username' in session, 'username': session['username'] if 'username' in session else None})
 
 
 @app.route('/login', methods=['POST'])
@@ -86,7 +87,7 @@ def sign_up_user():
 def get_oauth_url():
     query_parameters = {
         'client_id': config['PUSHBULLET_CLIENT_ID'],
-        'redirect_uri': 'https://235c1c2d.ngrok.io/oauth',
+        'redirect_uri': 'https://www.monitora.ml/oauth',
         'response_type': 'code'
     }
 
@@ -124,7 +125,7 @@ def add_new_product():
 
     existing_product = Products.objects(asin=product_data['asin'], username=session['username']).first()
     if existing_product:
-        job = JobHandler.objects(interval=existing_product.interval).first()
+        job = JobHandler.objects(interval=existing_product.interval, locale=existing_product.locale).first()
         job.batch_size -= 1
         if job.batch_size:
             job.save()
@@ -139,23 +140,24 @@ def add_new_product():
         interval=interval,
         threshold_price=int(product_data['thresholdPrice']),
         username=session['username'],
+        locale=product_data['locale']
     )
 
     product.save()
 
-    existing_job = JobHandler.objects(interval=interval).first()
+    existing_job = JobHandler.objects(interval=interval, locale=product_data['locale']).first()
     if existing_job:
         existing_job.batch_size += 1
         existing_job.save()
     else:
-        job = JobHandler(interval=interval, job_id=str(uuid.uuid4()), batch_size=1)
+        job = JobHandler(interval=interval, locale=product_data['locale'], job_id=str(uuid.uuid4()), batch_size=1)
         job.save()
 
         add_job_to_schedular(
             job=check_product_price_on_regular_interval,
             interval=interval,
             job_id=job.job_id,
-            args=[interval]
+            args=[interval, product_data['locale']]
         )
 
     status = True
@@ -170,7 +172,7 @@ def delete_product():
     existing_product = Products.objects(asin=product_data['asin'], username=session['username']).first()
 
     if existing_product:
-        job = JobHandler.objects(interval=existing_product.interval).first()
+        job = JobHandler.objects(interval=existing_product.interval, locale=existing_product.locale).first()
         job.batch_size -= 1
         if job.batch_size:
             job.save()
@@ -185,10 +187,17 @@ def delete_product():
         status = False
         message = 'Error ! No such product found in database.'
 
-    return jsonify({'status':status, 'message':message})
+    return jsonify({'status': status, 'message': message})
 
 
-@app.route('/getAddedProducts', methods=['GET'])
-def get_added_product():
-    products = Products.objects(username = session['username']).to_json()
-    return jsonify({'status':True, 'products': json.loads(products)})
+@app.route('/getRandomProducts', methods=['GET'])
+def get_random_products():
+    products = json.loads(Products.objects().to_json())
+    products = products[:20] if len(products) > 20 else products
+    return jsonify({'status': True, 'products': products})
+
+
+@app.route('/getUserProducts', methods=['GET'])
+def get_user_product():
+    products = json.loads(Products.objects(username=session['username']).to_json())
+    return jsonify({'status': True, 'products': products})

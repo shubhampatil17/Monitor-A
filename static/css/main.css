@@ -1,3 +1,12 @@
+html {
+    height: 100%;
+}
+
+body {
+    position: relative;
+    height: 100%;
+}
+
 .navbar-header {
     margin: 8px 0px;
 }
@@ -29,9 +38,18 @@
     background-color: transparent;
 }
 
+.navbar-default ul p i {
+    font-size: 3em;
+    line-height: 1.4em;
+}
+
+.navbar-default .usernameNavItem {
+    margin-right: 20px;
+}
+
 .footer {
     position: absolute;
-    bottom: 0;
+    top: 100%;
     width: 100%;
 }
 
@@ -39,9 +57,45 @@
     margin-bottom: 0px;
 }
 
-.footer .copyright {
+.footer .footerQuote {
     display: inline-block;
     padding-left: 15px;
     height: 72px;
     line-height: 72px;
+}
+
+.footer .footerQuote i {
+    color: red;
+}
+
+.loginForm {
+    text-align: center;
+}
+
+.alert {
+    margin: 10px 0px;
+}
+
+.loginForm input {
+    height: 40px;
+}
+
+.submitIcon {
+    padding-left: 20px;
+}
+
+.loginLoading {
+    position: absolute;
+    top: 40%;
+    left: 48%;
+}
+
+.loginLoading i,
+.loginLoading span {
+    display: block;
+    text-align: center;
+}
+
+.loginLoading span {
+    padding: 5px 0px;
 }

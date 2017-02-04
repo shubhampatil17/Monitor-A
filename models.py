@@ -13,9 +13,11 @@ class Products(Document):
     threshold_price = IntField(required=True)
     last_notified_price = IntField()
     username = StringField(required=True)
+    locale = StringField(required=True)
 
 
 class JobHandler(Document):
-    interval = IntField(required=True, unique=True)
+    interval = IntField(required=True, unique_with='locale')
+    locale = StringField(required=True)
     job_id = StringField(required=True)
     batch_size = IntField(required=True)

@@ -1,9 +1,6 @@
 var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
-    when('/login', {
-        templateUrl: '../static/partials/login.html'
-    }).
-    when('/homepage', {
+    when('/', {
         templateUrl: '../static/partials/homepage.html'
     }).
     when('/signup', {
@@ -13,21 +10,30 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
         templateUrl: '../static/partials/productList.html'
     }).
     otherwise({
-        redirectTo: '/homepage'
+        redirectTo: '/'
     });
 
 }]).controller("mainController", function ($scope, $http, $location) {
+    $scope.username;
+    $scope.password;
 
     $scope.isSignUpActive = function () {
-        return $location.path() === '/login';
+        return $location.path() !== '/signup';
     }
 
-    $scope.isLoginActive = function () {
-        return $location.path() === '/signup';
-    }
-
-    $scope.isLogoutActive = function () {
-        return $location.path() === '/homepage' || $location.path() === '/list-added-products';
+    $scope.checkLoginStatus = function () {
+        $http({
+            method: 'GET',
+            url: '/checkLoginStatus'
+        }).then(function (response) {
+            if (response.data.status) {
+                $scope.isLoggedInUser = response.data.status;
+                $scope.currentUser = response.data.username;
+            }
+        }, function (error) {
+            console.log(error);
+            //handle error
+        })
     }
 
     $scope.logoutUser = function () {
@@ -36,7 +42,8 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
             url: '/logout'
         }).then(function (response) {
             if (response.data.status) {
-                $location.path("/login");
+                $scope.isLoggedInUser = false;
+                $location.path("/");
             } else {
                 //note : show error
             }
@@ -46,22 +53,112 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
         })
     }
 
-    $scope.goToLandingPartial = function () {
+    $scope.startOAuthCycle = function () {
+        $http({
+            method: 'GET',
+            url: '/getOAuthUrl'
+        }).then(function (response) {
+            if (response.data.status) {
+                $window.location.href = response.data.oauth_url;
+            } else {
+                $scope.isLoggedInUser = false;
+                $location.path("/");
+            }
+        }, function (error) {
+            //handle error
+            console.log(error);
+        })
+    }
+
+    $scope.checkAccessToken = function () {
+        $http({
+            method: 'GET',
+            url: '/checkAccessTokenValidity',
+        }).then(function (response) {
+            if (response.data.status) {
+                $('#loginModal').modal('hide');
+                //$scope.submitProductData();
+                $scope.checkLoginStatus();
+            } else {
+                $scope.startOAuthCycle();
+            }
+        }, function (error) {
+            //handle error
+            console.log(error);
+        })
+    }
+
+    $scope.checkCredentials = function () {
+        $http({
+            method: 'POST',
+            url: '/login',
+            data: {
+                "username": $scope.username,
+                "password": $scope.password
+            }
+        }).then(function (response) {
+            if (response.data.status) {
+                $scope.checkAccessToken();
+            } else {
+                $scope.loginFailed = true;
+                $scope.loginFailureMessage = "Login failed ! Invalid credentials";
+            }
+        }, function (error) {
+            $scope.loginFailed = true;
+            $scope.loginFailureMessage = "Something went wrong ! Please try again later.";
+        })
+    }
+
+    $scope.checkLoginStatus();
+
+}).controller("homeController", function ($scope, $http, $timeout) {
+    $scope.product = {};
+    $scope.product.intervalUnit = "Seconds";
+    $scope.product.locale = "CO.UK"
+
+    $scope.submitProductData = function () {
         $http({
             method: 'GET',
             url: '/checkLoginStatus'
         }).then(function (response) {
             if (response.data.status) {
-                $location.path("/homepage");
+                $scope.addNewProduct();
             } else {
-                $location.path("/login");
+                $('#loginModal').modal('show');
             }
         }, function (error) {
-            //note : handle error
             console.log(error);
+            //log error
         })
     }
-    $scope.goToLandingPartial();
+
+    $scope.addNewProduct = function () {
+        $http({
+            method: 'POST',
+            url: '/addNewProduct',
+            data: {
+                "asin": $scope.product.productASIN,
+                "interval": $scope.product.interval,
+                "intervalUnit": $scope.product.intervalUnit,
+                "thresholdPrice": $scope.product.thresholdPrice,
+                "locale": $scope.product.locale
+            }
+        }).then(function (response) {
+            $scope.addProductComplete = true;
+            $scope.addProductSuccess = response.data.status;
+            $scope.addProductCompleteMessage = response.data.message;
+            $timeout(function () {
+                $scope.addProductComplete = false;
+            }, 8000)
+        }, function (error) {
+            $scope.addProductComplete = true;
+            $scope.addProductSuccess = true;
+            $scope.addProductCompleteMessage = "Something went wrong ! Please try again later"
+            $timeout(function () {
+                $scope.addProductComplete = false;
+            }, 8000)
+        })
+    }
 
 }).controller("signupController", function ($scope, $http, $location) {
     $scope.username;
@@ -78,7 +175,6 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
 
 
     $scope.checkEmailValidity = function () {
-        console.log("called");
         if ($scope.email) {
             $scope.checkingEmailUnderProgress = true;
             $http({
@@ -173,99 +269,6 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
         }
     }
 
-}).controller("loginController", function ($scope, $http, $location, $window) {
-    $scope.username;
-    $scope.password;
-    $scope.loginInProcess = false;
-
-    $scope.startOAuthCycle = function () {
-        $http({
-            method: 'GET',
-            url: '/getOAuthUrl'
-        }).then(function (response) {
-            if (response.data.status) {
-                $window.location.href = response.data.oauth_url;
-            } else {
-                $location.path("/login");
-            }
-        }, function (error) {
-            //handle error
-            console.log(error);
-        })
-    }
-
-    $scope.checkAccessToken = function () {
-        $http({
-            method: 'GET',
-            url: '/checkAccessTokenValidity',
-        }).then(function (response) {
-            $scope.loginInProcess = false;
-            if (response.data.status) {
-                $location.path("/homepage");
-            } else {
-                $scope.startOAuthCycle();
-            }
-        }, function (error) {
-            //handle error
-            console.log(error);
-        })
-    }
-
-    $scope.checkCredentials = function () {
-        $scope.loginInProcess = true;
-        $http({
-            method: 'POST',
-            url: '/login',
-            data: {
-                "username": $scope.username,
-                "password": $scope.password
-            }
-        }).then(function (response) {
-            if (response.data.status) {
-                $scope.checkAccessToken();
-            } else {
-                $scope.loginInProcess = false;
-                $scope.loginFailed = true;
-                $scope.loginFailureMessage = "Login failed ! Invalid credentials";
-            }
-        }, function (error) {
-            $scope.loginInProcess = false;
-            $scope.loginFailed = true;
-            $scope.loginFailureMessage = "Something went wrong ! Please try again later.";
-        })
-    }
-}).controller("homeController", function ($scope, $http, $timeout) {
-    $scope.product = {};
-    $scope.product.intervalUnit = "Seconds";
-
-    $scope.addNewProduct = function () {
-        $http({
-            method: 'POST',
-            url: '/addNewProduct',
-            data: {
-                "asin": $scope.product.productASIN,
-                "interval": $scope.product.interval,
-                "intervalUnit": $scope.product.intervalUnit,
-                "thresholdPrice": $scope.product.thresholdPrice
-            }
-        }).then(function (response) {
-            $scope.addProductComplete = true;
-            $scope.addProductSuccess = response.data.status;
-            $scope.addProductCompleteMessage = response.data.message;
-            $timeout(function () {
-                $scope.addProductComplete = false;
-            }, 8000)
-        }, function (error) {
-            $scope.addProductComplete = true;
-            $scope.addProductSuccess = true;
-            $scope.addProductCompleteMessage = "Something went wrong ! Please try again later"
-            $timeout(function () {
-                $scope.addProductComplete = false;
-            }, 8000)
-        })
-    }
-
-    $scope.goToLandingPartial();
 }).controller("productListController", function ($scope, $http, $window, $timeout) {
     $scope.productsPerPage = 4;
     $scope.paginationSlot = [1, 2, 3, 4, 5];
@@ -296,20 +299,6 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
         $scope.paginationIndex = page;
     }
 
-    $scope.getProductList = function () {
-        $http({
-            method: 'GET',
-            url: '/getAddedProducts',
-        }).then(function (response) {
-            if (response.data.status) {
-                $scope.productList = response.data.products;
-            }
-        }, function (error) {
-            //handle error
-            console.log(error)
-        })
-    }
-
     $scope.floor = function (number) {
         return $window.Math.floor(number);
     }
@@ -324,7 +313,6 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
         $scope.showDeleteResponse = false;
         $scope.productDeletionSuccess = false;
         $scope.productUnderDeletion = false;
-        console.log($('#confirmationModal')[0]);
         $('#confirmationModal').modal('show');
     }
 
@@ -344,7 +332,7 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
             $timeout(function () {
                 $('#confirmationModal').modal('hide');
             }, 3000)
-            $scope.getProductList();
+            $scope.fetchProducts();
 
         }, function (error) {
             //handle error
@@ -352,5 +340,38 @@ var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$ro
         })
     }
 
-    $scope.getProductList();
+    $scope.fetchProducts = function () {
+        if ($scope.isLoggedInUser) {
+            $http({
+                method: 'GET',
+                url: '/getUserProducts'
+            }).then(function (response) {
+                if (response.data.status) {
+                    $scope.productList = response.data.products;
+                }
+
+            }, function (error) {
+                //handle error
+                console.log(error);
+            })
+
+        } else {
+            $http({
+                method: 'GET',
+                url: '/getRandomProducts'
+            }).then(function (response) {
+                if (response.data.status) {
+                    $scope.productList = response.data.products;
+                }
+
+            }, function (error) {
+                //handle error
+                console.log(error);
+            })
+        }
+    }
+
+    $scope.$watch('isLoggedInUser', $scope.fetchProducts);
+    $scope.fetchProducts();
+
 });

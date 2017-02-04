@@ -2,6 +2,14 @@
     height: 40px;
 }
 
+
+/*
+.signupForm {
+    padding-top: 5%;
+    padding-bottom: 11%;
+}
+*/
+
 .validUsername,
 .validEmail {
     color: green;

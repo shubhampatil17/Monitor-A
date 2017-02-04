@@ -8,7 +8,6 @@
 
     <title>Monitor-A</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{url_for('static', filename = 'css/login.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename = 'css/signup.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename = 'css/homepage.css')}}">
     <link rel="stylesheet" href="{{url_for('static', filename = 'css/productList.css')}}">
@@ -21,24 +20,58 @@
 </head>
 
 <body ng-controller="mainController" ng-cloak>
+    <div id="loginModal" class="modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h3 class="modal-title">Please sign in to continue ...</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3">
+                            <form class="loginForm" ng-submit="checkCredentials()">
+                                <div class="form-group">
+                                    <label class="sr-only" for="username">Email or Username</label>
+                                    <input type="text" class="form-control" id="username" placeholder="Email or Username" name="username" required autofocus ng-model="username">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="sr-only" for="password">Password</label>
+                                    <input type="password" class="form-control" id="password" placeholder="Password" name="password" required ng-model="password">
+                                </div>
+
+                                <button type="submit" class="btn btn-lg btn-primary btn-block">Sign In<i class="fa fa-paper-plane-o submitIcon" aria-hidden="true"></i></button>
+
+                                <div class="alert alert-danger" ng-show="loginFailed">
+                                    <strong>{{loginFailureMessage}}</strong>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <header class="header">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
                 <div class="navbar-header">
-                    <a class="navbar-brand textLogo" href="#" ng-click="goToLandingPartial()">
+                    <a class="navbar-brand textLogo" href="/#/">
                         Monitor-A
                     </a>
                 </div>
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li>
-                        <a href="/#/signup" class="btn btn-primary navbar-btn signupBtn" ng-show="isSignUpActive()">SIGN UP</a>
+                    <li class="usernameNavItem">
+                        <p ng-show="isLoggedInUser"><i class="fa fa-user-circle-o fa-2x" aria-hidden="true"></i>{{currentUser}}</p>
                     </li>
                     <li>
-                        <a href="/#/login" class="btn btn-primary navbar-btn signupBtn" ng-show="isLoginActive()">LOG IN</a>
+                        <a href="/#/signup" class="btn btn-primary navbar-btn signupBtn" ng-show="!isLoggedInUser">SIGN UP</a>
                     </li>
                     <li>
-                        <a href="#" ng-click="logoutUser()" class="btn btn-primary navbar-btn logoutBtn" ng-show="isLogoutActive()">LOGOUT</a>
+                        <a href="#" ng-click="logoutUser()" class="btn btn-primary navbar-btn logoutBtn" ng-show="isLoggedInUser">LOGOUT</a>
                     </li>
                 </ul>
 
@@ -51,20 +84,20 @@
     <footer class="footer">
         <nav class="navbar navbar-default">
             <div class="container-fluid">
-                <span class="copyright">&copy; Copyright. All rights reserved.</span>
+                <span class="footerQuote"></span>
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="#" class="facebook">
+                        <a href="https://www.facebook.com/Amazon/" class="facebook">
                             <i class="fa fa-facebook fa-3x" aria-hidden="true"></i>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="twitter">
+                        <a href="https://twitter.com/amazon" class="twitter">
                             <i class="fa fa-twitter fa-3x" aria-hidden="true"></i>
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="gplus">
+                        <a href="https://plus.google.com/+amazon" class="gplus">
                             <i class="fa fa-google-plus fa-3x" aria-hidden="true"></i>
                         </a>
                     </li>
