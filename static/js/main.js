@@ -1,4 +1,4 @@
-var app = angular.module("amazonMonitor", ["ngRoute", "ngAnimate"]).config(['$routeProvider', function ($routeProvider) {
+var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider', function ($routeProvider) {
     $routeProvider.
     when('/', {
         templateUrl: '../static/partials/homepage.html'

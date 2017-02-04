@@ -99,3 +99,11 @@ body {
 .loginLoading span {
     padding: 5px 0px;
 }
+
+.usernameNavItem p {
+    margin: 0px;
+}
+
+.usernameNavItem i {
+    margin: 5px 10px;
+}
