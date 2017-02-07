@@ -85,9 +85,16 @@
 
 from datetime import datetime
 from urllib import parse
+from collections import OrderedDict
+from copy import deepcopy
+
+import hmac
+import hashlib
+import base64
+
 
 awsAccessKeyId = 'AKIAIOSFODNN7EXAMPLE'
-awsSecretKey = '1234567890'
+awsSecretKey = bytearray('1234567890', encoding='utf-8')
 
 params = {
     'Service': 'AWSECommerceService',
@@ -97,11 +104,25 @@ params = {
     'ItemId': 'B00008OE6I,B35987036I,B0002546I,B25468OE6I,B09788OE6I,B00453OE6I',
     'ResponseGroup': 'ItemAttributes,Offers,Images,Reviews',
     'Version': '2013-08-01',
-    'Timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+    'Timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
 }
 
-for key in params:
-    params[key]=parse.quote(params[])
+encoded_params = parse.urlencode(OrderedDict(sorted(deepcopy(params).items())))
 
+signature = 'GET\n' + 'webservices.amazon.com\n' + '/onca/xml\n' + encoded_params
+signature = signature.encode('utf-8')
+
+digest = hmac.new(awsSecretKey, msg=signature, digestmod=hashlib.sha256).digest()
+encrypted_hmac = parse.quote(base64.b64encode(digest).decode())
 print(params)
+print(encrypted_hmac)
+
+# for key in params:
+#     params[key]=parse.quote(params[key])
+
+# sorted_params = {}
+# for key in sorted(params):
+#     sorted_params[key] = params[key]
+#
+# print(sorted_params)
 # print(parse.urlencode(params))
