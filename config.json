@@ -1,4 +1,20 @@
 {
   "PUSHBULLET_CLIENT_ID" : "i5juV9YZn77OATj6Ht7OKvkd3HrEKkI0",
-  "PUSHBULLET_CLIENT_SECRET" : "Hz6xrCeUlDGo1oajKyLx3IIGJXWMqysG"
+  "PUSHBULLET_CLIENT_SECRET" : "Hz6xrCeUlDGo1oajKyLx3IIGJXWMqysG",
+  "AWS_ACCESS_KEY_ID": "AKIAJV3UTWQNHR7FNQFA",
+  "AWS_SECRET_KEY": "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",
+  "AWS_LOCALE_CREDENTRIALS": {
+    "co.uk": {
+      "associate_tag": "monitora0e-21"
+    },
+    "de": {
+      "associate_tag": "monitora00-21"
+    },
+    "fr": {
+      "associate_tag": "monitora06-21"
+    },
+    "it": {
+      "associate_tag": "monitora07-21"
+    }
+  }
 }
