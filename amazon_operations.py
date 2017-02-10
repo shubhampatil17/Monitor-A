@@ -62,52 +62,26 @@ def get_request_signature(params, endpoint, aws_secret_key):
 
 
 def is_asin_valid(asin, locale):
-    params = {
+    params = OrderedDict(sorted({
         'Service': 'AWSECommerceService',
         'AWSAccessKeyId': config['AWS_ACCESS_KEY_ID'],
         'AssociateTag': config['AWS_LOCALE_CREDENTRIALS'][locale.lower()]['associate_tag'],
         'Operation': 'ItemLookup',
         'ItemId': asin.upper(),
         'IdType': 'ASIN',
-        # 'ResponseGroup': 'ItemAttributes,Offers,Images,Reviews',
+        'ResponseGroup': 'Offers,Images',
         'Version': '2013-08-01',
         'Timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
-    }
+    }.items()))
 
-    print(parse.urlencode(params))
-    params = OrderedDict(sorted(params.items()))
-    print(parse.urlencode(params))
+    canonical_string = 'GET\n{}\n/onca/xml\n{}'.format(api_endpoints.AMAZON_PRODUCT_API_ENDPOINTS[locale], parse.urlencode(params))
 
-    string_to_sign = 'GET\n{}\n/onca/xml\n{}'.format(api_endpoints.AMAZON_PRODUCT_API_ENDPOINTS[locale], parse.urlencode(params))
-    print(string_to_sign)
-
-    digest = hmac.new(config['AWS_SECRET_KEY'].encode(), msg=string_to_sign.encode(), digestmod=hashlib.sha256).digest()
+    digest = hmac.new(config['AWS_SECRET_KEY'].encode(), msg=canonical_string.encode(), digestmod=hashlib.sha256).digest()
     signature = base64.b64encode(digest)
-    print(signature)
 
     params['Signature'] = signature
-    print(parse.urlencode(params))
-
-    # params = OrderedDict(sorted({
-    #     'Service': 'AWSECommerceService',
-    #     'AWSAccessKeyId': config['AWS_ACCESS_KEY_ID'],
-    #     'AssociateTag': config['AWS_LOCALE_CREDENTRIALS'][locale.lower()]['associate_tag'],
-    #     'Operation': 'ItemLookup',
-    #     'ItemId': asin.upper(),
-    #     'IdType': 'ASIN',
-    #     # 'ResponseGroup': 'ItemAttributes,Offers,Images,Reviews',
-    #     'Version': '2013-08-01',
-    #     'Timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
-    # }.items()))
-    #
-    # print(params)
-    # aws_secret_key = config['AWS_SECRET_KEY']
-    # signature = get_request_signature(params, api_endpoints.AMAZON_PRODUCT_API_ENDPOINTS[locale], aws_secret_key)
-    # params['Signature'] = signature
-    #
-    # response = requests.get('http://{}/onca/xml'.format(api_endpoints.AMAZON_PRODUCT_API_ENDPOINTS[locale.lower()]), params=params)
-    # print(response.url)
-    # print(response.text)
+    response = requests.get('https://{}/onca/xml'.format(api_endpoints.AMAZON_PRODUCT_API_ENDPOINTS[locale.lower()]), params=params)
+    print(response.text)
     return True, None
 
 
