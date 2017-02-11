@@ -114,7 +114,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
 }).controller("homeController", function ($scope, $http, $timeout) {
     $scope.product = {};
     $scope.product.intervalUnit = "Seconds";
-    $scope.product.locale = "CO.UK"
+    $scope.product.locale = "co.uk";
 
     $scope.submitProductData = function () {
         $http({
@@ -147,6 +147,9 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
             $scope.addProductComplete = true;
             $scope.addProductSuccess = response.data.status;
             $scope.addProductCompleteMessage = response.data.message;
+            $scope.product = {};
+            $scope.product.intervalUnit = "Seconds";
+            $scope.product.locale = "co.uk";
             $timeout(function () {
                 $scope.addProductComplete = false;
             }, 8000)

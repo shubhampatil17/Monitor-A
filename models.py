@@ -1,4 +1,5 @@
-from mongoengine import Document, StringField, EmailField, IntField
+from mongoengine import Document, StringField, EmailField, IntField, FloatField, URLField
+
 
 class Users(Document):
     username = StringField(required=True, unique=True)
@@ -8,12 +9,14 @@ class Users(Document):
 
 
 class Products(Document):
-    asin = StringField(required=True, unique_with='username')
+    asin = StringField(required=True, unique_with='username', max_length=10)
     interval = IntField(required=True)
-    threshold_price = IntField(required=True)
-    last_notified_price = IntField()
+    threshold_price = FloatField(required=True)
     username = StringField(required=True)
     locale = StringField(required=True)
+    last_notified_price = FloatField(required=True)
+    product_url = URLField()
+    image_url = URLField()
 
 
 class JobHandler(Document):

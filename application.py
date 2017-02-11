@@ -7,7 +7,7 @@ from passlib.hash import pbkdf2_sha256
 import database_connection
 import api_endpoints
 from models import Users, Products, JobHandler
-from amazon_operations import is_asin_valid, is_interval_valid, check_product_price_on_regular_interval
+from amazon_operations import fetch_product_validity, fetch_interval_validity, check_product_price_on_regular_interval
 from pushbullet_operations import check_current_user_data, get_access_token
 from schedular_operations import schedular, add_job_to_schedular
 from utils import get_time_in_seconds
@@ -113,12 +113,12 @@ def add_new_product():
     product_data = request.get_json(force=True)
     interval = get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit'])
 
-    valid_asin, message = is_asin_valid(product_data['asin'])
+    valid_asin, message, product_url, image_url, price = fetch_product_validity(product_data['asin'], product_data['locale'])
     if not valid_asin:
         status = False
         return jsonify({'status': status, 'message': message})
 
-    valid_interval, message = is_interval_valid(interval, product_data['asin'], session['username'])
+    valid_interval, message = fetch_interval_validity(interval, product_data['asin'], session['username'])
     if not valid_interval:
         status = False
         return jsonify({'status': status, 'message': message})
@@ -140,7 +140,10 @@ def add_new_product():
         interval=interval,
         threshold_price=int(product_data['thresholdPrice']),
         username=session['username'],
-        locale=product_data['locale']
+        locale=product_data['locale'],
+        last_notified_price=price,
+        product_url=product_url,
+        image_url=image_url
     )
 
     product.save()

@@ -34,7 +34,7 @@ def get_access_token(code):
     return response['access_token']
 
 
-def send_push_notification(product):
+def send_push_notification(product, lastest_price):
     access_token = Users.objects(username=product.username).first().pn_access_token
 
     headers = {
@@ -44,9 +44,9 @@ def send_push_notification(product):
 
     data = {
         'type': 'link',
-        'title': 'Some Title',
-        'body': 'Some Body',
-        'url': 'Some url'
+        'title': 'Prices dropped ! Hurry !',
+        'body': 'Prices for product with ASIN {} has dropped below threshold to {}. Click here for more information.'.format(product.asin, lastest_price),
+        'url': product.product_url
     }
 
     response = requests.post(api_endpoints.PUSHBULLET_CREATE_PUSH_ENDPOINT, headers=headers, json=data).json()

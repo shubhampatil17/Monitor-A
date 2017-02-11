@@ -12,8 +12,13 @@ executors = {
     'processpool' : ProcessPoolExecutor()
 }
 
-schedular = BackgroundScheduler(jobstores = jobstores, executors = executors, timezone = utc)
+job_defaults = {
+    'max_instances': 3
+}
+
+schedular = BackgroundScheduler(jobstores = jobstores, executors = executors, job_defaults=job_defaults, timezone = utc)
 schedular.start()
+
 
 def add_job_to_schedular(job, interval, job_id, args):
     schedular.add_job(

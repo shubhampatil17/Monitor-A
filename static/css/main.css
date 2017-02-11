@@ -12,6 +12,7 @@ body {
 }
 
 .navbar-default {
+    z-index: 99;
     border-radius: 0px;
 }
 
