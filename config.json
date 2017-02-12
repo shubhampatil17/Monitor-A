@@ -16,5 +16,7 @@
     "it": {
       "associate_tag": "monitora07-21"
     }
-  }
+  },
+  "MAILGUN_PRIVATE_SECRET_KEY": "key-6cce2c6a298fef9f9fbb14cb15255bd6",
+  "MAILGUN_PUBLIC_SECRET_KEY": "pubkey-2f58f4df3ac2acc1f83c5c12ad0e5c70"
 }

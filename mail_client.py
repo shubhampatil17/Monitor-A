@@ -1,28 +1,29 @@
-# import smtplib
-# import email.utils
-# import database_connection
-# import os
-# from models import Users
-# from email.mime.text import MIMEText
-#
-# fromaddr = os.environ.get('MAILER_USERNAME')
-# password = os.environ.get('MAILER_PASSWORD')
-# server = smtplib.SMTP('smtp.gmail.com', 587)
-# server.starttls()
-# server.login(fromaddr, password)
-#
-def send_email(product):
-    pass
-#     user = Users.objects(username=product.username).first()
-#     toaddr = [user.email]
-#
-#     msg = MIMEText('You have got mail.')
-#     msg['To'] = email.utils.formataddr(('Recipient', ','.join(toaddr)))
-#     msg['From'] = email.utils.formataddr(('Author', fromaddr))
-#     msg['Subject'] = 'Prices dropped !'
-#
-#     try:
-#         server.sendmail(fromaddr, toaddr, msg.as_string())
-#     except:
-#         pass
-#
+from models import Users
+
+import requests
+import json
+
+config = json.loads(open('config.json').read())
+domain = 'monitora.ml'
+
+
+def is_verified_email(email):
+    data = {
+        'address': email
+    }
+
+    response = requests.get('https://api.mailgun.net/v3/address/validate', auth=('api', config['MAILGUN_PUBLIC_SECRET_KEY']), data=data).json()
+    return response['is_valid']
+
+
+def send_email(product, latest_price):
+    recipient = Users.objects(username=product.username).first().email
+
+    data = {
+        'from': 'Monitor-A <no-reply@monitora.ml>',
+        'to': recipient,
+        'subject': 'Prices Dropped ! Hurry !',
+        'text': 'Dear User,\nPrices for product with ASIN {} has dropped below threshold to {}. Click on the link below for more information.\n{}'.format(product.asin, latest_price, product.product_url)
+    }
+
+    response = requests.post('https://api.mailgun.net/v3/{}/messages'.format(domain), auth=('api', config['MAILGUN_PRIVATE_SECRET_KEY']), data=data)

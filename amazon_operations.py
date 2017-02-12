@@ -161,7 +161,7 @@ def check_product_price_on_regular_interval(interval, locale):
 
             if current_price < product.threshold_price and current_price != product.last_notified_price:
                 send_push_notification(product, current_price)
-                # send_email(product, current_price)
+                send_email(product, current_price)
 
             product.last_notified_price = current_price
             product.save()

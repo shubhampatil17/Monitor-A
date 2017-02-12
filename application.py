@@ -11,6 +11,7 @@ from amazon_operations import fetch_product_validity, fetch_interval_validity, c
 from pushbullet_operations import check_current_user_data, get_access_token
 from schedular_operations import schedular, add_job_to_schedular
 from utils import get_time_in_seconds
+from mail_client import is_verified_email
 
 app = Flask(__name__)
 config = json.loads(open('config.json').read())
@@ -73,14 +74,21 @@ def check_email_validity():
 
 @app.route('/signUpUser', methods=['POST'])
 def sign_up_user():
-    signup_data = request.get_json(force=True);
+    signup_data = request.get_json(force=True)
     username = signup_data['username']
     email = signup_data['email']
-    password = pbkdf2_sha256.hash(signup_data['password'])
 
-    user = Users(username=username, email=email, password=password)
-    user.save()
-    return jsonify({'status': True})
+    if is_verified_email(email):
+        password = pbkdf2_sha256.hash(signup_data['password'])
+        user = Users(username=username, email=email, password=password)
+        user.save()
+        status = True
+        message = None
+    else:
+        status = False
+        message = "Invalid email address !"
+
+    return jsonify({'status': status, 'message': message})
 
 
 @app.route('/getOAuthUrl')
@@ -113,7 +121,8 @@ def add_new_product():
     product_data = request.get_json(force=True)
     interval = get_time_in_seconds(int(product_data['interval']), product_data['intervalUnit'])
 
-    valid_asin, message, product_url, image_url, price = fetch_product_validity(product_data['asin'], product_data['locale'])
+    valid_asin, message, product_url, image_url, price = fetch_product_validity(product_data['asin'],
+                                                                                product_data['locale'])
     if not valid_asin:
         status = False
         return jsonify({'status': status, 'message': message})

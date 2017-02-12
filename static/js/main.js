@@ -193,7 +193,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
                     $scope.emailValidityStatusText = "";
                 } else {
                     $scope.emailValidityStatus = false;
-                    $scope.emailValidityStatusText = "Already Exist !";
+                    $scope.emailValidityStatusText = "Already exists !";
                 }
             }, function (error) {
                 //handle error here
@@ -254,7 +254,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
                     $scope.signupSuccess = true;
                 } else {
                     $scope.signupFailed = true;
-                    $scope.signupFailureMessage = "Something Went wrong ! Please try again later."
+                    $scope.signupFailureMessage = response.data.message;
                 }
             }, function (error) {
                 //handle error here
