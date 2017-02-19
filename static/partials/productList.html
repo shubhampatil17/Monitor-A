@@ -16,21 +16,19 @@
 
                     <div class="thumbnail text-center">
                         <a href="{{product.product_url}}">
-                            <img ng-src="{{product.image_url}}" alt="http://g-ec2.images-amazon.com/images/G/01/social/api-share/amazon_logo_500500._V323939215_.png">
+                            <img ng-src="{{product.image_url}}" alt="http://g-ec2.images-amazon.com/images/G/01/social/api-share/amazon_logo_500500._V323939215_.png" style="height:240px;width:160px;">
                         </a>
                         <div class="caption">
-                            <p class="productContentASIN"><strong>ASIN :</strong> {{product.asin}}</p>
-                            <p class="productContentInterval"><strong>Interval :</strong> {{product.interval}}s</p>
-                            <p class="productContentThreshold"><strong>Threshold :</strong> {{product.threshold_price}}</p>
-                            <p class="productContentUser" ng-show="!isLoggedInUser"><strong>Added By : {{product.username}}</strong></p>
-                            <p class="text-right" ng-show="isLoggedInUser">
-                                <a href="javascript:void(0);" ng-click="popConfirmationBox(product.asin)"><i class="fa fa-trash" aria-hidden="true"></i></a>
-                            </p>
+                            <h4 class="productContentASIN">{{product.asin}}&nbsp;&nbsp;<a href="javascript:void(0)" ng-show="isLoggedInUser" ng-click="popConfirmationBox(product.asin)"><i class="fa fa-trash" aria-hidden="true"></i></a></h4>
+
+                            <p class="productContentInterval" title="Monitored At Every : {{product.interval}} s"><strong>Monitored At Every :</strong> {{product.interval}} s</p>
+
+                            <p class="productContentThreshold" title="With Threshold Price Limit : {{product.threshold_price}}"><strong>With Threshold Price Limit :</strong> {{product.threshold_price}}</p>
+
+                            <p class="productContentUser" ng-show="!isLoggedInUser" title="Added By : {{product.username}}"><strong>Added By : </strong> {{product.username}}</p>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
 

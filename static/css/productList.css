@@ -4,6 +4,10 @@
     margin-bottom: 20px;
 }
 
+.productList .container {
+    margin-bottom: 10%;
+}
+
 .homepageBtn i {
     padding-right: 10px;
 }
@@ -12,16 +16,13 @@
     text-align: center;
 }
 
-.productList .content {
-    min-height: 440px;
-}
+.productList .content {}
 
 .pagination {
     margin: 10px 0px;
 }
 
 .productList .content .thumbnail i {
-    font-size: 20px;
     color: indianred;
 }
 
@@ -30,4 +31,10 @@
     vertical-align: middle;
     font-size: 40px;
     font-weight: bold;
+}
+
+.productList .thumbnail p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }

@@ -107,7 +107,7 @@ def fetch_product_validity(asin, locale):
         product_url = response.find('.//response:DetailPageURL', amazon_namespaces).text
         image_url = response.find('.//response:Item/response:LargeImage', amazon_namespaces).find('response:URL',
                                                                                                   amazon_namespaces).text
-        price = float(response.find('.//response:OfferSummary/response:LowestNewPrice/response:Amount',
+        price = float(response.find('.//response:OfferSummary/response:LowestUsedPrice/response:Amount',
                                     amazon_namespaces).text) / 100
 
     return valid_asin, message, product_url, image_url, price
@@ -138,10 +138,12 @@ def fetch_product_data_by_item_lookup(products):
             if response.find('error:Error', amazon_namespaces):
                 time.sleep(random.randint(1, 10))
             else:
-                data = [{'price': float(item.find('.//response:OfferSummary/response:LowestNewPrice/response:Amount', amazon_namespaces).text)/100} for item in response.findall('.//response:Item', amazon_namespaces)]
+                data = [{'price': float(item.find('.//response:OfferSummary/response:LowestUsedPrice/response:Amount',
+                                                  amazon_namespaces).text) / 100} for item in
+                        response.findall('.//response:Item', amazon_namespaces)]
                 break;
     except:
-        data = [{'price': product.last_notified_price} for product in products ]
+        data = [{'price': product.last_notified_price} for product in products]
 
     return data
 
@@ -167,3 +169,58 @@ def check_product_price_on_regular_interval(interval, locale):
             product.save()
 
         time.sleep(1)
+
+
+def search_items_on_amazon(keywords, locale):
+    total_items = []
+
+    for page in range(1, 6):
+        params = OrderedDict(sorted({
+                                        'Service': 'AWSECommerceService',
+                                        'AWSAccessKeyId': config['AWS_ACCESS_KEY_ID'],
+                                        'AssociateTag': config['AWS_LOCALE_CREDENTRIALS'][locale.lower()][
+                                            'associate_tag'],
+                                        'Operation': 'ItemSearch',
+                                        'Keywords': parse.quote_plus(keywords),
+                                        'SearchIndex': 'All',
+                                        'Availability': 'Available',
+                                        'Condition': 'Used',
+                                        'ItemPage': str(page),
+                                        'ResponseGroup': 'ItemAttributes,Offers,Images',
+                                        'Version': '2013-08-01',
+                                        'Timestamp': datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'),
+                                    }.items()))
+
+        params['Signature'] = get_request_signature(params, locale)
+
+        response = et.fromstring(requests.get(
+            'https://{}/onca/xml'.format(api_endpoints.AMAZON_PRODUCT_API_ENDPOINTS[locale.lower()]),
+            params=params).text)
+
+        if response.find('error:Error', amazon_namespaces):
+            raise Exception('Request returned error !')
+        elif response.find('.//response:Request/response:Errors', amazon_namespaces):
+            continue
+        else:
+            items = [{
+                         'asin': item.find('.//response:ASIN', amazon_namespaces).text,
+                         'title': item.find('.//response:ItemAttributes//response:Title', amazon_namespaces).text,
+                         'product_url': item.find('.//response:DetailPageURL', amazon_namespaces).text,
+                         'lowest_used_price': '{} {}'.format(int(
+                             item.find('.//response:OfferSummary/response:LowestUsedPrice/response:Amount',
+                                       amazon_namespaces).text) / 100, item.find(
+                             './/response:OfferSummary/response:LowestUsedPrice/response:CurrencyCode',
+                             amazon_namespaces).text),
+                         'image_url': item.find('.//response:LargeImage/response:URL', amazon_namespaces).text,
+                         'locale': locale
+                     } for item in response.findall('.//response:Item', amazon_namespaces) if
+                     item.find('.//response:Offers/response:Offer', amazon_namespaces) and
+                     item.find('.//response:Offers/response:Offer//response:Condition',
+                               amazon_namespaces).text == 'Used' and
+                     item.find('.//response:Offers/response:Offer//response:IsEligibleForPrime',
+                               amazon_namespaces).text == '1']
+
+        total_items += items
+        time.sleep(0.5)
+
+    return total_items

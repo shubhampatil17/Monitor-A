@@ -4,6 +4,136 @@
         <a href="/#/list-added-products" class="btn btn-default btn-sm pull-right allProductsBtn">Products Added By You<i class="fa fa-chevron-right" aria-hidden="true"></i></a>
     </div>
 
+    <div class="container searchPanelGroup">
+        <div class="searchPanel">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" class="form-control input-lg" placeholder="Search for keywords ..." ng-model="searchKeywords">
+                            <div class="input-group-addon">
+                                <a href="javascript:void(0)" ng-click="searchItems()"><i class="fa fa-search fa-2x" aria-hidden="true"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row text-center">
+                <div class="col-md-2 col-md-offset-3">
+                    <span>On Amazon Locale :</span>
+                </div>
+                <div class="col-md-1">
+                    <label class="radio-inline">
+                        <input type="radio" name="searchLocale" value="co.uk" ng-model="searchLocale">CO.UK
+                    </label>
+                </div>
+                <div class="col-md-1">
+                    <label class="radio-inline">
+                        <input type="radio" name="searchLocale" value="de" ng-model="searchLocale">DE
+                    </label>
+                </div>
+                <div class="col-md-1">
+                    <label class="radio-inline">
+                        <input type="radio" name="searchLocale" value="fr" ng-model="searchLocale">FR
+                    </label>
+                </div>
+                <div class="col-md-1">
+                    <label class="radio-inline">
+                        <input type="radio" name="searchLocale" value="it" ng-model="searchLocale">IT
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="text-center searchLoaderBox" ng-show="searchUnderProgress">
+            <div><i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+            </div>
+            <span>Searching</span>
+        </div>
+    </div>
+
+
+    <div id="searchResults" class="container searchResults" ng-show="searchCompleted">
+        <p class="text-center searchResultsStatus">Search Results : {{searchResultMessage}}</p>
+
+
+        <div class="row">
+            <div class="col-md-3" ng-repeat="item in searchResults">
+                <div class="thumbnail text-center">
+                    <a href="{{item.product_url}}">
+                        <img ng-src="{{item.image_url}}" alt="http://g-ec2.images-amazon.com/images/G/01/social/api-share/amazon_logo_500500._V323939215_.png" style="height:150px;width:100px;">
+                    </a>
+                    <div class="caption">
+                        <h4>{{item.asin}}&nbsp;&nbsp;<a href="javascript:void(0)" ng-click="popUpAddProductModal(item.asin, item.locale)"><i class="fa fa-desktop" aria-hidden="true"></i></a></h4>
+                        <p title="{{item.title}}">{{item.title}}</p>
+                        <p title="Lowest Used Price : {{item.lowest_used_price}}"><strong>Lowest Used Price :</strong> {{item.lowest_used_price}}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--    <a href="javascript:void(0)" ng-click="popUpAddProductModal('ABCDEFGHIJ', 'de')"><i class="fa fa-desktop" aria-hidden="true"></i></a>-->
+    <div class="modal fade" id="addProductModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">Add this product ...</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-10 col-md-offset-1">
+                            <form ng-submit="submitProductData()" class="text-center">
+                                <h3>Monitor this product</h3>
+                                <div class="form-group">
+                                    <label class="sr-only" for="productASIN">Product's ASIN</label>
+                                    <input type="text" class="form-control" id="productASIN" placeholder="Product's ASIN" name="productASIN" ng-model="product.productASIN" required readonly>
+                                </div>
+                                <h3>On Amazon locale</h3>
+                                <div class="form-group">
+                                    <label class="sr-only" for="locale">Locale</label>
+                                    <select class="form-control amazonLocale" name="locale" ng-model="product.locale">
+                                        <option value="co.uk">CO.UK</option>
+                                        <option value="de">DE</option>
+                                        <option value="fr">FR</option>
+                                        <option value="it">IT</option>
+                                    </select>
+                                </div>
+
+                                <h3>In every</h3>
+                                <div class="form-group">
+                                    <label class="sr-only" for="interval">Interval</label>
+                                    <input type="number" class="form-control interval-value" id="interval" name="interval" placeholder="Price Checking Interval" ng-model="product.interval" required>
+
+                                    <select class="form-control interval-unit" name="intervalUnit" ng-model="product.intervalUnit">
+                                        <option>Seconds</option>
+                                        <option>Minutes</option>
+                                        <option>Hours</option>
+                                        <option>Days</option>
+                                        <option>Weeks</option>
+                                    </select>
+                                </div>
+                                <h3>And notify me when price is lower than</h3>
+
+                                <div class="form-group">
+                                    <label class="sr-only" for="thresholdPrice">Price</label>
+                                    <input type="number" class="form-control" id="thresholdPrice" name="thresholdPrice" placeholder="Threshold Price" ng-model="product.thresholdPrice" required>
+                                </div>
+                                <button type="submit" class="btn btn-lg btn-primary btn-block addProductBtn">Start Monitoring <i class="fa fa-check" aria-hidden="true"></i></button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="alert" ng-show="addProductComplete" ng-class="addProductSuccess ? 'alert-success' : 'alert-danger'">
+                        <p><strong>Status</strong></p>
+                        {{addProductCompleteMessage}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--
     <div class="container">
         <div class="row">
             <div class="col-md-6 col-md-offset-3 well">
@@ -57,4 +187,5 @@
 
         </div>
     </div>
+-->
 </div>

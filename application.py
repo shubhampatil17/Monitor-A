@@ -7,7 +7,7 @@ from passlib.hash import pbkdf2_sha256
 import database_connection
 import api_endpoints
 from models import Users, Products, JobHandler
-from amazon_operations import fetch_product_validity, fetch_interval_validity, check_product_price_on_regular_interval
+from amazon_operations import fetch_product_validity, fetch_interval_validity, check_product_price_on_regular_interval, search_items_on_amazon
 from pushbullet_operations import check_current_user_data, get_access_token
 from schedular_operations import schedular, add_job_to_schedular
 from utils import get_time_in_seconds
@@ -213,3 +213,16 @@ def get_random_products():
 def get_user_product():
     products = json.loads(Products.objects(username=session['username']).to_json())
     return jsonify({'status': True, 'products': products})
+
+
+@app.route('/searchItems', methods=['GET'])
+def search_items():
+    try:
+        keywords = request.args.get('searchKeywords')
+        locale = request.args.get('searchLocale')
+        items = search_items_on_amazon(keywords, locale)
+        status = True
+    except:
+        status = False
+
+    return jsonify({'status': status, 'searchResults': items if status else []})

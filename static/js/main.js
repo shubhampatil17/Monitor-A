@@ -111,10 +111,52 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
 
     $scope.checkLoginStatus();
 
-}).controller("homeController", function ($scope, $http, $timeout) {
+}).controller("homeController", function ($scope, $http, $timeout, $location, $anchorScroll) {
+
+    $scope.searchKeywords;
+    $scope.searchLocale = "co.uk";
+    $scope.searchCompleted = false;
+
     $scope.product = {};
     $scope.product.intervalUnit = "Seconds";
     $scope.product.locale = "co.uk";
+
+    $scope.searchItems = function () {
+        if ($scope.searchKeywords) {
+            $scope.searchUnderProgress = true;
+            $http({
+                method: 'GET',
+                url: '/searchItems',
+                params: {
+                    'searchKeywords': $scope.searchKeywords,
+                    'searchLocale': $scope.searchLocale
+                }
+            }).then(function (response) {
+                $scope.searchUnderProgress = false;
+                $scope.searchCompleted = true;
+
+                angular.element
+
+                if (response.data.status) {
+                    $scope.searchResultMessage = response.data.searchResults.length + " warehouse item(s) found";
+                    $scope.searchResults = response.data.searchResults;
+                } else {
+                    $scope.searchResultMessage = "Something went wrong ! Please try again.";
+                }
+
+            }, function (error) {
+                //handle error;
+                console.log(error);
+            })
+        }
+    }
+
+    $scope.popUpAddProductModal = function (asin, locale) {
+        $("#addProductModal").modal("show");
+        $scope.product.productASIN = asin;
+        $scope.product.locale = locale;
+    }
+
 
     $scope.submitProductData = function () {
         $http({
@@ -124,6 +166,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
             if (response.data.status) {
                 $scope.addNewProduct();
             } else {
+                $('#addProductModal').modal('hide');
                 $('#loginModal').modal('show');
             }
         }, function (error) {
@@ -152,14 +195,14 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
             $scope.product.locale = "co.uk";
             $timeout(function () {
                 $scope.addProductComplete = false;
-            }, 8000)
+            }, 8000);
         }, function (error) {
             $scope.addProductComplete = true;
             $scope.addProductSuccess = true;
             $scope.addProductCompleteMessage = "Something went wrong ! Please try again later"
             $timeout(function () {
                 $scope.addProductComplete = false;
-            }, 8000)
+            }, 8000);
         })
     }
 

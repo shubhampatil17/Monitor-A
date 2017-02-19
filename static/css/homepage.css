@@ -69,3 +69,30 @@
 .homepage .addProductBtn {
     margin: 30px 0px;
 }
+
+.homepage .searchPanelGroup {
+    margin-top: 10%;
+    margin-bottom: 10%;
+}
+
+.homepage .searchLoaderBox {
+    margin-top: 10%;
+}
+
+.homepage .searchLoaderBox div {
+    margin-bottom: 10px;
+}
+
+.homepage .searchResults {
+    margin-bottom: 10%;
+}
+
+.searchResults .thumbnail p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.searchResults .searchResultsStatus {
+    margin-bottom: 20px;
+}
