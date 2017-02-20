@@ -116,6 +116,7 @@ def fetch_product_validity(asin, locale):
 def fetch_product_data_by_item_lookup(products):
     try:
         while True:
+            data = []
             params = OrderedDict(sorted({
                                             'Service': 'AWSECommerceService',
                                             'AWSAccessKeyId': config['AWS_ACCESS_KEY_ID'],
@@ -138,9 +139,12 @@ def fetch_product_data_by_item_lookup(products):
             if response.find('error:Error', amazon_namespaces):
                 time.sleep(random.randint(1, 10))
             else:
-                data = [{'price': float(item.find('.//response:OfferSummary/response:LowestUsedPrice/response:Amount',
-                                                  amazon_namespaces).text) / 100} for item in
-                        response.findall('.//response:Item', amazon_namespaces)]
+                for item in response.findall('.//response:Item', amazon_namespaces):
+                    price = float(item.find('.//response:OfferSummary/response:LowestUsedPrice/response:Amount',
+                                            amazon_namespaces).text) / 100 if item.find(
+                        './/response:OfferSummary/response:LowestUsedPrice', amazon_namespaces) else None
+                    data.append({'price': price})
+
                 break;
     except:
         data = [{'price': product.last_notified_price} for product in products]
@@ -159,7 +163,8 @@ def check_product_price_on_regular_interval(interval, locale):
         data = fetch_product_data_by_item_lookup(batch)
 
         for index in range(len(batch)):
-            product, current_price = batch[index], data[index]['price']
+            product = batch[index]
+            current_price = data[index]['price'] if data[index]['price'] else product.last_notified_price
 
             if current_price < product.threshold_price and current_price != product.last_notified_price:
                 send_push_notification(product, current_price)

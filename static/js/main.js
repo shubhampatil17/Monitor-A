@@ -118,7 +118,7 @@ var app = angular.module("amazonMonitor", ["ngRoute"]).config(['$routeProvider',
     $scope.searchCompleted = false;
 
     $scope.product = {};
-    $scope.product.intervalUnit = "Seconds";
+    $scope.product.intervalUnit = "seconds";
     $scope.product.locale = "co.uk";
 
     $scope.searchItems = function () {
