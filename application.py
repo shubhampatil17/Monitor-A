@@ -175,9 +175,6 @@ def add_new_product():
     status = True
     message = 'Success ! Product added successfully.'
 
-    print(status)
-    print(message)
-
     return jsonify({'status': status, 'message': message})
 
 
